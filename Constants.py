@@ -1,11 +1,14 @@
 import pygame as pg
 import os
 
+import pygame.image
+
+GAME_ICON = pygame.image.load('Images/spaceShips_007.png')
 WIDTH, HEIGHT = 800, 600
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
-GRAY = (60, 63, 65)
+SPACE = (60, 63, 65)
 FPS = 60
 VEL = 5
 BULLET_VEL = 9
