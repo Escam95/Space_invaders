@@ -9,6 +9,9 @@ pg.display.set_caption('Space Invaders')
 pg.display.set_icon(c.GAME_ICON)
 bullets = []
 game_running = True
+shooting_delay = 500
+ally_shot_event = pygame.USEREVENT + 1
+pygame.time.set_timer(ally_shot_event, shooting_delay)
 
 
 def on_key_down(event):
@@ -17,10 +20,6 @@ def on_key_down(event):
         space_ship_vel = 1
     elif event.key == pg.K_a and space_ship.x > c.SCREEN_OFFSET:
         space_ship_vel = -1
-    elif event.key == pg.K_SPACE:
-        bullet = pygame.Rect(space_ship.x + c.SPACESHIP_WIDTH // 2 - c.BULLET_WIDTH // 2,
-                             space_ship.y + c.SPACESHIP_HEIGHT // 3, c.BULLET_WIDTH, c.BULLET_HEIGHT)
-        bullets.append(bullet)
 
 
 def on_key_up(event):
@@ -40,6 +39,10 @@ def game_input():
             on_key_down(event)
         elif event.type == pg.KEYUP:
             on_key_up(event)
+        if event.type == ally_shot_event:
+            bullet = pygame.Rect(space_ship.x + c.SPACESHIP_WIDTH // 2 - c.BULLET_WIDTH // 2,
+                                 space_ship.y + c.SPACESHIP_HEIGHT // 3, c.BULLET_WIDTH, c.BULLET_HEIGHT)
+            bullets.append(bullet)
 
 
 def game_update():

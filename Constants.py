@@ -16,3 +16,4 @@ BULLET_HEIGHT = 12
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 60
 SPACESHIP_IMAGE = pg.image.load(os.path.join('Images', 'spaceShips_007.png'))
 SPACESHIP = pg.transform.rotate(pg.transform.scale(SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 180)
+
