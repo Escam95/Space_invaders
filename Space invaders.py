@@ -1,6 +1,7 @@
 import pygame
 import pygame as pg
 import Constants as c
+
 pygame.init()
 
 clock = pg.time.Clock()
@@ -59,6 +60,7 @@ def game_output():
     window.blit(c.SPACESHIP, (space_ship.x, space_ship.y))
     for bullet in bullets:
         pygame.draw.rect(window, c.BULLET_COLOR, bullet)
+    window.blit(c.BASIC_ENEMY_IMAGE, (0, 0))
     pg.display.flip()
 
 
