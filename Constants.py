@@ -1,6 +1,8 @@
 import pygame as pg
 import os
 
+pg.init()
+
 images = [
     (0, 0),
     (7, 4),

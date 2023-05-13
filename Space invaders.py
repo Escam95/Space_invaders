@@ -85,6 +85,8 @@ def game_output():
 
 space_ship = pg.Rect((c.WIDTH - c.IMAGE_SIZE) // 2, c.HEIGHT - c.HEIGHT // 8,
                      c.IMAGE_SIZE, c.IMAGE_SIZE)
+space_ship_mask = pg.mask.from_surface(c.SPACESHIP_IMAGE)
+space_ship_mask_image = space_ship_mask.to_surface()
 space_ship_vel = 0
 while game_running:
     clock.tick(c.FPS)
