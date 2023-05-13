@@ -1,5 +1,6 @@
 import pygame as pg
 import Constants as c
+import random
 
 pg.init()
 
@@ -48,18 +49,26 @@ def game_input():
                              space_ship.y + c.IMAGE_SIZE // 4, c.BULLET_WIDTH, c.BULLET_HEIGHT)
             bullets.append(bullet)
         if event.type == spawn_basic_enemy:
-            enemy = pg.Rect((c.WIDTH - c.IMAGE_SIZE) // 2, c.HEIGHT - c.HEIGHT // 8,
+            enemy = pg.Rect(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET), 0,
                             c.IMAGE_SIZE, c.IMAGE_SIZE)
             enemies.append(enemy)
+            pg.time.set_timer(spawn_basic_enemy, spawning_delay)
 
 
 def game_update():
-    global space_ship_vel
+    global space_ship_vel, spawning_delay
     space_ship.x = space_ship.x + space_ship_vel * c.VEL
     if space_ship.x > (c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET) or space_ship.x < c.SCREEN_OFFSET:
         space_ship_vel = 0
+    for enemy in enemies:
+        enemy.y += c.ENEMY_VEL
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
+        if bullet.collidelist(enemies) >= 0:
+            enemies.pop(bullet.collidelist(enemies))
+            bullets.remove(bullet)
+    if spawning_delay > 100:
+        spawning_delay -= 1
 
 
 def game_output():

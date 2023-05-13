@@ -3,7 +3,7 @@ import os
 
 images = [
     (0, 0),
-    (4, 4),
+    (7, 4),
     (5, 4)
 ]
 
@@ -28,6 +28,7 @@ VEL = 5
 BULLET_VEL = 9
 BULLET_WIDTH = 5
 BULLET_HEIGHT = 12
+ENEMY_VEL = 2
 IMAGE_SIZE = 64
 tile_sheet_image = pg.image.load(os.path.join('Images', 'simpleSpace_tilesheet.png'))
 BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BLACK, 180)
