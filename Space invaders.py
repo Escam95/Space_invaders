@@ -56,12 +56,14 @@ def game_input():
 
 
 def game_update():
-    global space_ship_vel, spawning_delay
+    global space_ship_vel, spawning_delay, shooting_delay, game_running
     space_ship.x = space_ship.x + space_ship_vel * c.VEL
     if space_ship.x > (c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET) or space_ship.x < c.SCREEN_OFFSET:
         space_ship_vel = 0
     for enemy in enemies:
         enemy.y += c.ENEMY_VEL
+        if enemy.colliderect(space_ship):
+            game_running = False
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
         if bullet.collidelist(enemies) >= 0:
@@ -89,3 +91,8 @@ while game_running:
     game_input()
     game_update()
     game_output()
+game_running = True
+while game_running:
+    game_input()
+    pg.draw.rect(window, c.BLACK, (c.WIDTH // 2, c.HEIGHT // 2, 200, 100))
+    pg.display.flip()
