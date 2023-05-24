@@ -9,14 +9,14 @@ window = pg.display.set_mode((c.WIDTH, c.HEIGHT))
 pg.display.set_caption('Space Invaders')
 pg.display.set_icon(c.GAME_ICON)
 bullets = []
+enemy_bullets = []
 enemies = []
 game_running = True
-shooting_delay = 500
-spawning_delay = 2000
-ally_shot_event = pg.USEREVENT + 1
-pg.time.set_timer(ally_shot_event, shooting_delay)
-spawn_basic_enemy = pg.USEREVENT + 2
-pg.time.set_timer(spawn_basic_enemy, spawning_delay)
+shooting_delay = .5 * c.FPS
+shooting_delay_countdown = shooting_delay
+spawning_delay = 2 * c.FPS
+spawning_delay_countdown = spawning_delay
+health = c.STARTING_HEALTH
 
 
 def on_key_down(event):
@@ -33,6 +33,19 @@ def on_key_up(event):
         space_ship_vel = 0
     elif event.key == pg.K_a and space_ship_vel == -1:
         space_ship_vel = 0
+    elif event.key == pg.K_SPACE:
+        spawn_swarm()
+
+
+def spawn_basic(position):
+    enemy = pg.Rect(position, 0,
+                    c.IMAGE_SIZE, c.IMAGE_SIZE)
+    enemies.append(enemy)
+
+
+def spawn_swarm():
+    for i in range(0, round((c.WIDTH - 2 * c.SCREEN_OFFSET) / 64)):
+        spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
 
 def game_input():
@@ -44,40 +57,62 @@ def game_input():
             on_key_down(event)
         elif event.type == pg.KEYUP:
             on_key_up(event)
-        if event.type == ally_shot_event:
-            bullet = pg.Rect(space_ship.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
-                             space_ship.y + c.IMAGE_SIZE // 4, c.BULLET_WIDTH, c.BULLET_HEIGHT)
-            bullets.append(bullet)
-        if event.type == spawn_basic_enemy:
-            enemy = pg.Rect(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET), 0,
-                            c.IMAGE_SIZE, c.IMAGE_SIZE)
-            enemies.append(enemy)
-            pg.time.set_timer(spawn_basic_enemy, spawning_delay)
 
 
 def game_update():
-    global space_ship_vel, spawning_delay, shooting_delay, game_running
+    global space_ship_vel, spawning_delay_countdown, shooting_delay_countdown, game_running, health
+
+    if health <= 0:
+        game_running = False
+
+    shooting_delay_countdown -= 1
+    if shooting_delay_countdown == 0:
+        bullet = pg.Rect(space_ship.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
+                         space_ship.y + c.IMAGE_SIZE // 4, c.BULLET_WIDTH, c.BULLET_HEIGHT)
+        bullets.append(bullet)
+        shooting_delay_countdown = shooting_delay
+    spawning_delay_countdown -= 1
+    if spawning_delay_countdown == 0:
+        spawn_basic(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+        spawning_delay_countdown = spawning_delay
+
     space_ship.x = space_ship.x + space_ship_vel * c.VEL
+
     if space_ship.x > (c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET) or space_ship.x < c.SCREEN_OFFSET:
         space_ship_vel = 0
+
     for enemy in enemies:
-        enemy.y += c.ENEMY_VEL
-        if enemy.colliderect(space_ship):
+        enemy.y += c.ENEMY_Y_VEL
+        if random.randint(0, 100) == 100:
+            enemy_bullet = pg.Rect(enemy.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
+                                   enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
+            enemy_bullets.append(enemy_bullet)
+        if enemy.y >= c.HEIGHT:
+            enemies.remove(enemy)
+        elif enemy.colliderect(space_ship):
             game_running = False
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
         if bullet.collidelist(enemies) >= 0:
             enemies.pop(bullet.collidelist(enemies))
             bullets.remove(bullet)
-    if spawning_delay > 100:
-        spawning_delay -= 1
+        elif bullet.y < 0:
+            bullets.remove(bullet)
+    for enemy_bullet in enemy_bullets:
+        enemy_bullet.y += c.ENEMY_BULLET_VEL
+        if enemy_bullet.colliderect(space_ship):
+            enemy_bullets.remove(enemy_bullet)
+            health -= 50
 
 
 def game_output():
     window.fill(c.SPACE)
     window.blit(c.SPACESHIP_IMAGE, (space_ship.x, space_ship.y))
+    pg.draw.rect(window, c.ENEMY_BULLET_COLOR, (0, 0, 500, 10))
     for bullet in bullets:
         pg.draw.rect(window, c.BULLET_COLOR, bullet)
+    for enemy_bullet in enemy_bullets:
+        pg.draw.rect(window, c.ENEMY_BULLET_COLOR, enemy_bullet)
     for enemy in enemies:
         window.blit(c.BASIC_ENEMY_IMAGE, enemy)
     pg.display.flip()

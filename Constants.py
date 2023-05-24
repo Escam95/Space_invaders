@@ -20,20 +20,24 @@ def get_image(sheet, width, height, image_id, scale, colour, rotation):
 
 
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1400, 800
 SCREEN_OFFSET = 75
 SPACE = (60, 63, 65)
 BLACK = (0, 0, 0)
 BULLET_COLOR = (255, 255, 255)
+ENEMY_BULLET_COLOR = (255, 0, 0)
 FPS = 60
 VEL = 5
 BULLET_VEL = 9
+ENEMY_BULLET_VEL = 5
 BULLET_WIDTH = 5
 BULLET_HEIGHT = 12
-ENEMY_VEL = 2
+ENEMY_Y_VEL = 2
 IMAGE_SIZE = 64
 tile_sheet_image = pg.image.load(os.path.join('Images', 'simpleSpace_tilesheet.png'))
 BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BLACK, 180)
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 60
 SPACESHIP_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 0, 1, BLACK, 0)
+
+STARTING_HEALTH = 500
 
