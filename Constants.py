@@ -7,7 +7,10 @@ images = [
     (0, 0),
     (7, 4),
     (5, 4),
-    (5, 5)
+    (5, 5),
+    (3, 0),
+    (2, 0),
+    (5, 0)
 ]
 
 
@@ -22,6 +25,9 @@ def get_image(sheet, width, height, image_id, scale, colour, rotation):
 
 score = 0
 score_increment = 1
+score_a = 1
+
+upgrade_images = 2
 
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
 WIDTH, HEIGHT = 1400, 800
@@ -42,7 +48,10 @@ tile_sheet_image = pg.image.load(os.path.join('Images', 'simpleSpace_tilesheet.p
 BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BLACK, 180)
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 60
 SPACESHIP_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 0, 1, BLACK, 0)
-UPGRADE_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 3, 1, BLACK, 0)
-ALLY_UPGRADE_IMAGES = ...
-STARTING_HEALTH = 500
+UPGRADE_ICON_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 3, 1, BLACK, 0)
+ALLY_UPGRADES = []
+for upgrade_image_id in range(0, upgrade_images):
+    upgrade_image = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, upgrade_image_id + 4, 1, BLACK, 0)
+    ALLY_UPGRADES.append(upgrade_image)
 
+STARTING_HEALTH = 500
