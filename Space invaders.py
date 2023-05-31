@@ -48,7 +48,7 @@ def spawn_swarm():
         spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
 
-def game_input():
+def game_input(): #
     global game_running
     for event in pg.event.get():
         if event.type == pg.QUIT:
