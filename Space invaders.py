@@ -12,11 +12,18 @@ bullets = []
 enemy_bullets = []
 enemies = []
 game_running = True
+score_delay = 0.5 * c.FPS
+score_delay_countdown = score_delay
 shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
 spawning_delay = 2 * c.FPS
 spawning_delay_countdown = spawning_delay
 health = c.STARTING_HEALTH
+
+font_obj = pg.font.Font(None, 32)
+score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
+score_Rect = score_Surface.get_rect()
+score_Rect.center = (400, 30)
 
 
 def on_key_down(event):
@@ -48,7 +55,7 @@ def spawn_swarm():
         spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
 
-def game_input(): #
+def game_input():
     global game_running
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -60,10 +67,19 @@ def game_input(): #
 
 
 def game_update():
-    global space_ship_vel, spawning_delay_countdown, shooting_delay_countdown, game_running, health
+    global space_ship_vel, spawning_delay_countdown, shooting_delay_countdown, game_running, health, score_Rect, \
+        score_Surface, score_delay_countdown
 
     if health <= 0:
         game_running = False
+
+    score_delay_countdown -= 1
+    if score_delay_countdown == 0:
+        score_Surface = font_obj.render(str(c.score // c.score_a), True, (97, 222, 42), None)
+        score_Rect = score_Surface.get_rect()
+        score_Rect.center = (400, 30)
+        c.score += c.score_increment
+        score_delay_countdown = score_delay
 
     shooting_delay_countdown -= 1
     if shooting_delay_countdown == 0:
@@ -108,6 +124,7 @@ def game_update():
 def game_output():
     window.fill(c.SPACE)
     window.blit(c.SPACESHIP_IMAGE, (space_ship.x, space_ship.y))
+    window.blit(score_Surface, score_Rect)
     pg.draw.rect(window, c.ENEMY_BULLET_COLOR, (0, 0, 500, 10))
     for bullet in bullets:
         pg.draw.rect(window, c.BULLET_COLOR, bullet)
