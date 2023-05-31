@@ -13,6 +13,8 @@ enemy_bullets = []
 enemies = []
 upgrades = []
 game_running = True
+score_delay = 0.5 * c.FPS
+score_delay_countdown = score_delay
 shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
 spawning_delay = 2 * c.FPS
@@ -21,6 +23,11 @@ spawning_upgrade_delay = 5 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
 ally_upgrade = 0
+
+font_obj = pg.font.Font(None, 32)
+score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
+score_Rect = score_Surface.get_rect()
+score_Rect.center = (700, 15)
 
 
 def on_key_down(event):
@@ -70,10 +77,18 @@ def game_input():
 
 def game_update():
     global space_ship_vel, spawning_delay_countdown, \
-        shooting_delay_countdown, spawning_upgrade_countdown, game_running, health
+        shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, health, score_Rect
 
     if health <= 0:
         game_running = False
+
+    score_delay_countdown -= 1
+    if score_delay_countdown == 0:
+        score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
+        score_Rect = score_Surface.get_rect()
+        score_Rect.center = (700, 15)
+        c.score += c.score_increment
+        score_delay_countdown = score_delay
 
     shooting_delay_countdown -= 1
     if shooting_delay_countdown == 0:

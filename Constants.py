@@ -28,6 +28,7 @@ score_increment = 1
 score_a = 1
 
 upgrade_images = 2
+
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
 WIDTH, HEIGHT = 1400, 800
 SCREEN_OFFSET = 75
