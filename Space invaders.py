@@ -32,17 +32,17 @@ score_Rect.center = (700, 15)
 
 def on_key_down(event):
     global space_ship_vel, bullets
-    if event.key == pg.K_d and space_ship.x < c.WIDTH - c.SPACESHIP_WIDTH - c.SCREEN_OFFSET:
+    if event.key == pg.K_d or event.key == pg.K_RIGHT and space_ship.x < c.WIDTH - c.SPACESHIP_WIDTH - c.SCREEN_OFFSET:
         space_ship_vel = 1
-    elif event.key == pg.K_a and space_ship.x > c.SCREEN_OFFSET:
+    elif event.key == pg.K_a or event.key == pg.K_LEFT and space_ship.x > c.SCREEN_OFFSET:
         space_ship_vel = -1
 
 
 def on_key_up(event):
     global space_ship_vel
-    if event.key == pg.K_d and space_ship_vel == 1:
+    if event.key == pg.K_d or event.key == pg.K_RIGHT and space_ship_vel == 1:
         space_ship_vel = 0
-    elif event.key == pg.K_a and space_ship_vel == -1:
+    elif event.key == pg.K_a or event.key == pg.K_LEFT and space_ship_vel == -1:
         space_ship_vel = 0
     elif event.key == pg.K_SPACE:
         spawn_swarm()
@@ -66,8 +66,9 @@ def spawn_upgrade(position):
 
 def game_input():
     global game_running
+    key_input = pg.key.get_pressed()
     for event in pg.event.get():
-        if event.type == pg.QUIT:
+        if event.type == pg.QUIT or key_input[pg.K_ESCAPE]:
             game_running = False
         elif event.type == pg.KEYDOWN:
             on_key_down(event)
@@ -77,7 +78,8 @@ def game_input():
 
 def game_update():
     global space_ship_vel, spawning_delay_countdown, \
-        shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, health, score_Rect
+        shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running,\
+        health, score_Rect
 
     if health <= 0:
         game_running = False
@@ -144,6 +146,7 @@ def game_update():
 def game_output():
     window.fill(c.SPACE)
     window.blit(c.SPACESHIP_IMAGE, (space_ship.x, space_ship.y))
+    window.blit(score_Surface, score_Rect)
     pg.draw.rect(window, c.ENEMY_BULLET_COLOR, (0, 0, 500, 10))
     for bullet in bullets:
         pg.draw.rect(window, c.BULLET_COLOR, bullet)
