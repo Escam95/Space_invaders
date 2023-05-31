@@ -11,12 +11,16 @@ pg.display.set_icon(c.GAME_ICON)
 bullets = []
 enemy_bullets = []
 enemies = []
+upgrades = []
 game_running = True
 shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
 spawning_delay = 2 * c.FPS
 spawning_delay_countdown = spawning_delay
+spawning_upgrade_delay = 5 * c.FPS
+spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
+ally_upgrade = 0
 
 
 def on_key_down(event):
@@ -48,7 +52,12 @@ def spawn_swarm():
         spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
 
-def game_input(): #
+def spawn_upgrade(position):
+    upgrade = pg.Rect(position, 0, c.IMAGE_SIZE, c.IMAGE_SIZE)
+    upgrades.append(upgrade)
+
+
+def game_input():
     global game_running
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -60,7 +69,8 @@ def game_input(): #
 
 
 def game_update():
-    global space_ship_vel, spawning_delay_countdown, shooting_delay_countdown, game_running, health
+    global space_ship_vel, spawning_delay_countdown, \
+        shooting_delay_countdown, spawning_upgrade_countdown, game_running, health
 
     if health <= 0:
         game_running = False
@@ -75,11 +85,22 @@ def game_update():
     if spawning_delay_countdown == 0:
         spawn_basic(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
         spawning_delay_countdown = spawning_delay
+    spawning_upgrade_countdown -= 1
+    if spawning_upgrade_countdown == 0:
+        spawn_upgrade(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+        spawning_upgrade_countdown = spawning_upgrade_delay
 
     space_ship.x = space_ship.x + space_ship_vel * c.VEL
 
     if space_ship.x > (c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET) or space_ship.x < c.SCREEN_OFFSET:
         space_ship_vel = 0
+
+    for upgrade in upgrades:
+        global ally_upgrade
+        upgrade.y += c.ENEMY_Y_VEL
+        if upgrade.colliderect(space_ship):
+            ally_upgrade += 1
+            upgrades.remove(upgrade)
 
     for enemy in enemies:
         enemy.y += c.ENEMY_Y_VEL
@@ -115,6 +136,8 @@ def game_output():
         pg.draw.rect(window, c.ENEMY_BULLET_COLOR, enemy_bullet)
     for enemy in enemies:
         window.blit(c.BASIC_ENEMY_IMAGE, enemy)
+    for upgrade in upgrades:
+        window.blit(c.UPGRADE_IMAGE, upgrade)
     pg.display.flip()
 
 
