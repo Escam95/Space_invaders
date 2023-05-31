@@ -1,7 +1,7 @@
 import pygame as pg
 import Constants as c
 import random
-#  ..
+
 pg.init()
 
 clock = pg.time.Clock()
