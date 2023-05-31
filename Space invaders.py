@@ -20,6 +20,7 @@ spawning_delay_countdown = spawning_delay
 spawning_upgrade_delay = 5 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
+ally_upgrade = 0
 
 
 def on_key_down(event):
@@ -95,7 +96,11 @@ def game_update():
         space_ship_vel = 0
 
     for upgrade in upgrades:
+        global ally_upgrade
         upgrade.y += c.ENEMY_Y_VEL
+        if upgrade.colliderect(space_ship):
+            ally_upgrade += 1
+            upgrades.remove(upgrade)
 
     for enemy in enemies:
         enemy.y += c.ENEMY_Y_VEL
