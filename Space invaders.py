@@ -2,6 +2,15 @@ import pygame as pg
 import Constants as c
 import random
 
+#  WE NEED:
+#  Health bars
+#  Upgrades -- Tobias
+#  Update the dmg dealing
+#  End screen
+#  Starting screen
+#  Bosses
+#  Waves
+
 pg.init()
 
 clock = pg.time.Clock()
@@ -119,7 +128,8 @@ def game_update():
         if upgrade.colliderect(space_ship):
             ally_upgrade += 1
             upgrades.remove(upgrade)
-            space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
+            if ally_upgrade < c.upgrade_images:
+                space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
 
     for enemy in enemies:
         enemy.y += c.ENEMY_Y_VEL
@@ -149,7 +159,6 @@ def game_output():
     global space_ship_image
     window.fill(c.SPACE)
     window.blit(space_ship_image, (space_ship.x, space_ship.y))
-    window.blit(c.SPACESHIP_IMAGE, (space_ship.x, space_ship.y))
     window.blit(score_Surface, score_Rect)
     pg.draw.rect(window, c.ENEMY_BULLET_COLOR, (0, 0, 500, 10))
     for bullet in bullets:
@@ -165,7 +174,7 @@ def game_output():
 
 space_ship = pg.Rect((c.WIDTH - c.IMAGE_SIZE) // 2, c.HEIGHT - c.HEIGHT // 8,
                      c.IMAGE_SIZE, c.IMAGE_SIZE)
-space_ship_mask = pg.mask.from_surface(c.SPACESHIP_IMAGE)
+space_ship_mask = pg.mask.from_surface(space_ship_image)
 space_ship_mask_image = space_ship_mask.to_surface()
 space_ship_vel = 0
 while game_running:

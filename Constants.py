@@ -10,7 +10,8 @@ images = [
     (5, 5),
     (3, 0),
     (2, 0),
-    (5, 0)
+    (5, 0),
+    (6, 0)
 ]
 
 
@@ -27,7 +28,7 @@ score = 0
 score_increment = 1
 score_a = 1
 
-upgrade_images = 2
+upgrade_images = 4
 
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
 WIDTH, HEIGHT = 1400, 800
