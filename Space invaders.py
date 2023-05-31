@@ -137,7 +137,7 @@ def game_output():
     for enemy in enemies:
         window.blit(c.BASIC_ENEMY_IMAGE, enemy)
     for upgrade in upgrades:
-        window.blit(c.UPGRADE_IMAGE, upgrade)
+        window.blit(c.UPGRADE_ICON_IMAGE, upgrade)
     pg.display.flip()
 
 
