@@ -20,6 +20,11 @@ def get_image(sheet, width, height, image_id, scale, colour, rotation):
     return image
 
 
+score = 0
+score_increment = 1
+score_a = 1
+
+
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
 WIDTH, HEIGHT = 1400, 800
 SCREEN_OFFSET = 75
