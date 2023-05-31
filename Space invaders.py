@@ -23,6 +23,7 @@ spawning_upgrade_delay = 5 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
 ally_upgrade = 0
+space_ship_image = c.SPACESHIP_IMAGE
 
 font_obj = pg.font.Font(None, 32)
 score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
@@ -111,11 +112,12 @@ def game_update():
         space_ship_vel = 0
 
     for upgrade in upgrades:
-        global ally_upgrade
+        global ally_upgrade, space_ship_image
         upgrade.y += c.ENEMY_Y_VEL
         if upgrade.colliderect(space_ship):
             ally_upgrade += 1
             upgrades.remove(upgrade)
+            space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
 
     for enemy in enemies:
         enemy.y += c.ENEMY_Y_VEL
@@ -142,8 +144,9 @@ def game_update():
 
 
 def game_output():
+    global space_ship_image
     window.fill(c.SPACE)
-    window.blit(c.SPACESHIP_IMAGE, (space_ship.x, space_ship.y))
+    window.blit(space_ship_image, (space_ship.x, space_ship.y))
     pg.draw.rect(window, c.ENEMY_BULLET_COLOR, (0, 0, 500, 10))
     for bullet in bullets:
         pg.draw.rect(window, c.BULLET_COLOR, bullet)
