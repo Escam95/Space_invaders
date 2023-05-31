@@ -23,7 +23,7 @@ health = c.STARTING_HEALTH
 font_obj = pg.font.Font(None, 32)
 score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
 score_Rect = score_Surface.get_rect()
-score_Rect.center = (400, 30)
+score_Rect.center = (700, 15)
 
 
 def on_key_down(event):
@@ -75,9 +75,9 @@ def game_update():
 
     score_delay_countdown -= 1
     if score_delay_countdown == 0:
-        score_Surface = font_obj.render(str(c.score // c.score_a), True, (97, 222, 42), None)
+        score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
         score_Rect = score_Surface.get_rect()
-        score_Rect.center = (400, 30)
+        score_Rect.center = (700, 15)
         c.score += c.score_increment
         score_delay_countdown = score_delay
 
