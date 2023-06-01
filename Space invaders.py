@@ -23,6 +23,7 @@ pg.display.set_icon(c.GAME_ICON)
 bullets = []
 enemy_bullets = []
 enemies = []
+enemies_health = []
 upgrades = []
 game_running = True
 score_delay = 0.5 * c.FPS
@@ -31,7 +32,7 @@ shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
 spawning_delay = 2 * c.FPS
 spawning_delay_countdown = spawning_delay
-spawning_upgrade_delay = 5 * c.FPS
+spawning_upgrade_delay = 20 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
 ally_upgrade = 0
@@ -67,6 +68,7 @@ def spawn_basic(position):
     enemy = pg.Rect(position, 0,
                     c.IMAGE_SIZE, c.IMAGE_SIZE)
     enemies.append(enemy)
+    enemies_health.append(c.ENEMY_STARTING_HEALTH)
 
 
 def spawn_swarm():
@@ -115,10 +117,12 @@ def game_update():
                          space_ship.y + c.IMAGE_SIZE // 4, c.BULLET_WIDTH, c.BULLET_HEIGHT)
         bullets.append(bullet)
         shooting_delay_countdown = shooting_delay
+
     spawning_delay_countdown -= 1
     if spawning_delay_countdown == 0:
         spawn_basic(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
         spawning_delay_countdown = spawning_delay
+
     spawning_upgrade_countdown -= 1
     if spawning_upgrade_countdown == 0:
         spawn_upgrade(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
