@@ -2,7 +2,7 @@ import pygame as pg
 import Constants as c
 import random
 
-#  WE NEED:
+#  WE NEED: HAHA L
 #  Health bars
 #  Upgrades -- Tobias
 #  Update the dmg dealing
