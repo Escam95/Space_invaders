@@ -26,7 +26,7 @@ enemies = []
 enemies_health = []
 upgrades = []
 game_running = True
-score_delay = 0.5 * c.FPS
+score_delay = 0.01 * c.FPS
 score_delay_countdown = score_delay
 shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
@@ -40,9 +40,11 @@ basic_enemy_health = c.ENEMY_STARTING_HEALTH
 ally_upgrade = 0
 space_ship_image = c.SPACESHIP_IMAGE
 
+score = 0
+
 # score text
 font_obj = pg.font.Font(None, 32)
-score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
+score_Surface = font_obj.render(str(score), True, (97, 222, 42), None)
 score_Rect = score_Surface.get_rect()
 score_Rect.center = (700, 15)
 
@@ -99,18 +101,18 @@ def game_input():
 def game_update():
     global space_ship_vel, spawning_delay_countdown, \
         shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running,\
-        health, score_Rect
+        health, score_Rect, score
 
     if health <= 0:
         game_running = False
 
     #  timers
     score_delay_countdown -= 1
-    if score_delay_countdown == 0:
-        score_Surface = font_obj.render(str(c.score), True, (97, 222, 42), None)
+    if score_delay_countdown <= 0:
+        score_Surface = font_obj.render(str(score), True, (97, 222, 42), None)
         score_Rect = score_Surface.get_rect()
         score_Rect.center = (700, 15)
-        c.score += c.score_increment
+        score += c.SCORE_INCREMENT
         score_delay_countdown = score_delay
 
     shooting_delay_countdown -= 1
@@ -138,12 +140,13 @@ def game_update():
 
     #  updating the lists
     for upgrade in upgrades:
-        global ally_upgrade, space_ship_image
+        global ally_upgrade, space_ship_image, bullet_damage
         upgrade.y += c.ENEMY_Y_VEL
         if upgrade.colliderect(space_ship):
             ally_upgrade += 1
             upgrades.remove(upgrade)
             health += 200
+            bullet_damage += 5
             if ally_upgrade < c.UPGRADE_IMAGES:
                 space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
 
@@ -162,7 +165,7 @@ def game_update():
             enemies_health.pop(enemies.index(enemy))
             enemies.remove(enemy)
         elif enemy.colliderect(space_ship):
-            game_running = False
+            health -= 200
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
         if bullet.collidelist(enemies) >= 0:
