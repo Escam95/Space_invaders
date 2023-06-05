@@ -195,6 +195,8 @@ def game_output():
         pg.draw.rect(window, c.ENEMY_BULLET_COLOR, enemy_bullet)
     for enemy in enemies:
         window.blit(c.BASIC_ENEMY_IMAGE, enemy)
+        pg.draw.rect(window, (255, 0, 0), (enemy.x, enemy.y - 20, c.IMAGE_SIZE, 5))
+        pg.draw.rect(window, (0, 255, 0), (enemy.x, enemy.y - 20, enemies_health[enemies.index(enemy)], 5))
     for upgrade in upgrades:
         window.blit(c.UPGRADE_ICON_IMAGE, upgrade)
     pg.display.flip()
