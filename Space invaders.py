@@ -36,6 +36,7 @@ spawning_upgrade_delay = 20 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
 bullet_damage = c.STARTING_BULLET_DMG
+basic_enemy_health = c.ENEMY_STARTING_HEALTH
 ally_upgrade = 0
 space_ship_image = c.SPACESHIP_IMAGE
 
@@ -69,7 +70,7 @@ def spawn_basic(position):
     enemy = pg.Rect(position, 0,
                     c.IMAGE_SIZE, c.IMAGE_SIZE)
     enemies.append(enemy)
-    enemies_health.append(c.ENEMY_STARTING_HEALTH)
+    enemies_health.append(basic_enemy_health)
 
 
 def spawn_swarm():
@@ -148,6 +149,11 @@ def game_update():
 
     for enemy in enemies:
         enemy.y += c.ENEMY_Y_VEL
+        # checking if an enemy health is 0
+        if enemies_health[enemies.index(enemy)] <= 0:
+            enemies_health.pop(enemies.index(enemy))
+            enemies.pop(enemies.index(enemy))
+        # shooting - 1 in 100 frames
         if random.randint(0, 100) == 100:
             enemy_bullet = pg.Rect(enemy.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
                                    enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
@@ -161,10 +167,6 @@ def game_update():
         bullet.y -= c.BULLET_VEL
         if bullet.collidelist(enemies) >= 0:
             enemies_health[bullet.collidelist(enemies)] -= bullet_damage
-            if enemies_health[bullet.collidelist(enemies)] <= 0:
-                enemies.pop(bullet.collidelist(enemies))
-                enemies_health.pop(bullet.collidelist(enemies))
-            # enemies.pop(bullet.collidelist(enemies))
             bullets.remove(bullet)
         elif bullet.y < 0:
             bullets.remove(bullet)
@@ -195,8 +197,10 @@ def game_output():
         pg.draw.rect(window, c.ENEMY_BULLET_COLOR, enemy_bullet)
     for enemy in enemies:
         window.blit(c.BASIC_ENEMY_IMAGE, enemy)
-        pg.draw.rect(window, (255, 0, 0), (enemy.x, enemy.y - 20, c.IMAGE_SIZE, 5))
-        pg.draw.rect(window, (0, 255, 0), (enemy.x, enemy.y - 20, enemies_health[enemies.index(enemy)], 5))
+        pg.draw.rect(window, (255, 0, 0), (enemy.x + c.IMAGE_SIZE//2 - basic_enemy_health//2, enemy.y - 20,
+                                           basic_enemy_health, 5))
+        pg.draw.rect(window, (0, 255, 0), (enemy.x + c.IMAGE_SIZE//2 - basic_enemy_health//2, enemy.y - 20,
+                                           enemies_health[enemies.index(enemy)], 5))
     for upgrade in upgrades:
         window.blit(c.UPGRADE_ICON_IMAGE, upgrade)
     pg.display.flip()
