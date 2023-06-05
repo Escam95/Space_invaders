@@ -165,6 +165,7 @@ def game_update():
             enemies_health.pop(enemies.index(enemy))
             enemies.remove(enemy)
         elif enemy.colliderect(space_ship):
+            enemies.remove(enemy)
             health -= 200
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
