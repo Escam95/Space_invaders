@@ -48,6 +48,7 @@ BULLET_HEIGHT = 12
 ENEMY_Y_VEL = 2
 IMAGE_SIZE = 64
 STARTING_HEALTH = 500
+STARTING_BULLET_DMG = 10
 ENEMY_STARTING_HEALTH = 20
 tile_sheet_image = pg.image.load(os.path.join('Images', 'simpleSpace_tilesheet.png'))
 BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BLACK, 180)

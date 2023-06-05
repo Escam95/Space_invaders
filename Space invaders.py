@@ -2,7 +2,7 @@ import pygame as pg
 import Constants as c
 import random
 
-#  WE NEED: HAHA L What does that even mean
+#  WE NEED:
 #  Health bars
 #  Upgrades -- Tobias
 #  Update the dmg dealing
@@ -35,6 +35,7 @@ spawning_delay_countdown = spawning_delay
 spawning_upgrade_delay = 20 * c.FPS
 spawning_upgrade_countdown = spawning_upgrade_delay
 health = c.STARTING_HEALTH
+bullet_damage = c.STARTING_BULLET_DMG
 ally_upgrade = 0
 space_ship_image = c.SPACESHIP_IMAGE
 
@@ -152,13 +153,18 @@ def game_update():
                                    enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
             enemy_bullets.append(enemy_bullet)
         if enemy.y >= c.HEIGHT:
+            enemies_health.pop(enemies.index(enemy))
             enemies.remove(enemy)
         elif enemy.colliderect(space_ship):
             game_running = False
     for bullet in bullets:
         bullet.y -= c.BULLET_VEL
         if bullet.collidelist(enemies) >= 0:
-            enemies.pop(bullet.collidelist(enemies))
+            enemies_health[bullet.collidelist(enemies)] -= bullet_damage
+            if enemies_health[bullet.collidelist(enemies)] <= 0:
+                enemies.pop(bullet.collidelist(enemies))
+                enemies_health.pop(bullet.collidelist(enemies))
+            # enemies.pop(bullet.collidelist(enemies))
             bullets.remove(bullet)
         elif bullet.y < 0:
             bullets.remove(bullet)
