@@ -53,7 +53,7 @@ BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BL
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 60
 SPACESHIP_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 0, 1, BLACK, 0)
 UPGRADE_ICON_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 3, 1, BLACK, 0)
-
+LEFT = 1
 # creating a list of the upgrade images for the allied ship
 ALLY_UPGRADES = []
 UPGRADE_IMAGES = 4

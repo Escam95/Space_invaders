@@ -26,7 +26,8 @@ enemies = []
 enemies_health = []
 upgrades = []
 game_running = True
-score_delay = 0.01 * c.FPS
+game_stopped = False
+score_delay = 0.1 * c.FPS
 score_delay_countdown = score_delay
 shooting_delay = .5 * c.FPS
 shooting_delay_countdown = shooting_delay
@@ -50,11 +51,13 @@ score_Rect.center = (700, 15)
 
 
 def on_key_down(event):
-    global space_ship_vel, bullets
+    global space_ship_vel, bullets, game_running
     if event.key == pg.K_d or event.key == pg.K_RIGHT and space_ship.x < c.WIDTH - c.SPACESHIP_WIDTH - c.SCREEN_OFFSET:
         space_ship_vel = 1
     elif event.key == pg.K_a or event.key == pg.K_LEFT and space_ship.x > c.SCREEN_OFFSET:
         space_ship_vel = -1
+    elif event.key == pg.K_r:
+        game_running = True
 
 
 def on_key_up(event):
@@ -91,11 +94,26 @@ def game_input():
     key_input = pg.key.get_pressed()
     for event in pg.event.get():
         if event.type == pg.QUIT or key_input[pg.K_ESCAPE]:
-            game_running = False
+            on_exit()
         elif event.type == pg.KEYDOWN:
             on_key_down(event)
         elif event.type == pg.KEYUP:
             on_key_up(event)
+
+
+# do you really want to exit menu
+def on_exit():
+    global game_running, game_stopped
+    game_stopped = True
+    while game_stopped:
+        pg.draw.rect(window, (0, 0, 0), (c.WIDTH//2 - 200, c.HEIGHT//2 - 50, 400, 100))
+        pg.display.flip()
+        key_input = pg.key.get_pressed()
+        for event in pg.event.get():
+            if event.type == pg.QUIT or key_input[pg.K_ESCAPE]:
+                exit()
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == c.LEFT:
+                game_stopped = False
 
 
 def game_update():
@@ -217,15 +235,12 @@ space_ship_mask_image = space_ship_mask.to_surface()
 space_ship_vel = 0
 
 #  main game loop
-while game_running:
-    clock.tick(c.FPS)
-    game_input()
-    game_update()
-    game_output()
-game_running = True
-
-#  temporary exit screen
-while game_running:
+while True:
+    while game_running:
+        clock.tick(c.FPS)
+        game_input()
+        game_update()
+        game_output()
     game_input()
     pg.draw.rect(window, c.BLACK, (c.WIDTH // 2, c.HEIGHT // 2, 200, 100))
     pg.display.flip()
