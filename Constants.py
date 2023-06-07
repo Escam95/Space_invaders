@@ -31,7 +31,7 @@ SCORE_INCREMENT = 1
 
 # basic constants
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
-WIDTH, HEIGHT = 1400, 800
+WIDTH, HEIGHT = 1600, 1000
 SCREEN_OFFSET = 75
 SPACE = (60, 63, 65)
 BLACK = (0, 0, 0)
