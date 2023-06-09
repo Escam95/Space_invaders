@@ -7,6 +7,8 @@ pg.init()
 images = [
     (0, 0),
     (7, 4),
+    (6, 4),
+    (5, 4),
     (5, 4),
     (5, 5),
     (3, 0),
@@ -50,14 +52,16 @@ STARTING_BULLET_DMG = 10
 ENEMY_STARTING_HEALTH = 20
 tile_sheet_image = pg.image.load(os.path.join('Images', 'simpleSpace_tilesheet.png'))
 BASIC_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 1, 1, BLACK, 180)
+FAST_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 3, 1, BLACK, 180)
+HEAVY_ENEMY_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 2, 1, BLACK, 180)
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 80, 60
 SPACESHIP_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 0, 1, BLACK, 0)
-UPGRADE_ICON_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 3, 1, BLACK, 0)
+UPGRADE_ICON_IMAGE = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, 5, 1, BLACK, 0)
 LEFT = 1
 # creating a list of the upgrade images for the allied ship
 ALLY_UPGRADES = []
 UPGRADE_IMAGES = 4
 for upgrade_image_id in range(0, UPGRADE_IMAGES):
-    upgrade_image = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, upgrade_image_id + 4, 1, BLACK, 0)
+    upgrade_image = get_image(tile_sheet_image, IMAGE_SIZE, IMAGE_SIZE, upgrade_image_id + 6, 1, BLACK, 0)
     ALLY_UPGRADES.append(upgrade_image)
 

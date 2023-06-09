@@ -29,6 +29,8 @@ while True:
     basic_enemies_health = []
     fast_enemies_health = []
     heavy_enemies_health = []
+    enemies = [basic_enemies, fast_enemies, heavy_enemies]
+    enemies_health = [basic_enemies_health, fast_enemies_health, heavy_enemies_health]
     upgrades = []
     game_running = True
     game_stopped = False
@@ -36,19 +38,26 @@ while True:
     score_delay_countdown = score_delay
     shooting_delay = .5 * c.FPS
     shooting_delay_countdown = shooting_delay
-    spawning_delay = 2 * c.FPS
-    spawning_delay_countdown = spawning_delay
+    basic_spawning_delay = 2 * c.FPS
+    basic_spawning_delay_countdown = basic_spawning_delay
+    fast_spawning_delay = 3 * c.FPS
+    fast_spawning_delay_countdown = fast_spawning_delay
+    heavy_spawning_delay = 5 * c.FPS
+    heavy_spawning_delay_countdown = heavy_spawning_delay
     swarm_spawning_delay = 10 * c.FPS
     swarm_spawning_countdown = swarm_spawning_delay
-    spawning_upgrade_delay = 20 * c.FPS
+    spawning_upgrade_delay = 5 * c.FPS
     spawning_upgrade_countdown = spawning_upgrade_delay
     health = c.STARTING_HEALTH
     max_health = health
     bullet_damage = c.STARTING_BULLET_DMG
     basic_enemy_health = c.ENEMY_STARTING_HEALTH
-    fast_enemy_health = c.ENEMY_STARTING_HEALTH - 30
+    fast_enemy_health = c.ENEMY_STARTING_HEALTH - 10
     heavy_enemy_health = c.ENEMY_STARTING_HEALTH + 100
     basic_enemy_max_health = basic_enemy_health
+    fast_enemy_max_health = fast_enemy_health
+    heavy_enemy_max_health = heavy_enemy_health
+    enemies_max_health = [basic_enemy_max_health, fast_enemy_max_health, heavy_enemy_max_health]
     ally_upgrade = 0
     space_ship_image = c.SPACESHIP_IMAGE
     score = 0
@@ -100,11 +109,13 @@ while True:
         fast_enemies.append(enemy)
         fast_enemies_health.append(fast_enemy_health)
 
+
     def spawn_heavy(position):
         enemy = pg.Rect(position, 0,
                         c.IMAGE_SIZE, c.IMAGE_SIZE)
         heavy_enemies.append(enemy)
         heavy_enemies_health.append(heavy_enemy_health)
+
 
     def spawn_boss(position):
         ...
@@ -156,14 +167,13 @@ while True:
 
 
     def game_update():
-        global space_ship_vel, spawning_delay_countdown, \
+        global space_ship_vel, basic_spawning_delay_countdown, \
             shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, \
-            health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown
+            health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown,\
+            fast_spawning_delay_countdown, heavy_spawning_delay_countdown
 
         if health <= 0:
             game_running = False
-
-        enemies = basic_enemies + fast_enemies + heavy_enemies
 
         #  timers
         score_delay_countdown -= 1
@@ -181,10 +191,20 @@ while True:
             bullets.append(bullet)
             shooting_delay_countdown = shooting_delay
 
-        spawning_delay_countdown -= 1
-        if spawning_delay_countdown <= 0:
+        basic_spawning_delay_countdown -= 1
+        if basic_spawning_delay_countdown <= 0:
             spawn_basic(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
-            spawning_delay_countdown = spawning_delay
+            basic_spawning_delay_countdown = basic_spawning_delay
+
+        fast_spawning_delay_countdown -= 1
+        if fast_spawning_delay_countdown <= 0:
+            spawn_fast(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+            fast_spawning_delay_countdown = fast_spawning_delay
+
+        heavy_spawning_delay_countdown -= 1
+        if heavy_spawning_delay_countdown <= 0:
+            spawn_heavy(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+            heavy_spawning_delay_countdown = heavy_spawning_delay
 
         swarm_spawning_countdown -= 1
         if swarm_spawning_countdown <= 0:
@@ -217,32 +237,44 @@ while True:
                 if ally_upgrade < c.UPGRADE_IMAGES:
                     space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
 
-        for enemy in basic_enemies:
-            enemy.y += c.ENEMY_Y_VEL
-            # checking if an enemy health is 0
-            if basic_enemies_health[basic_enemies.index(enemy)] <= 0:
-                basic_enemies_health.pop(basic_enemies.index(enemy))
-                basic_enemies.pop(basic_enemies.index(enemy))
-            # shooting - 1 in 100 frames
-            if random.randint(0, 100) == 100:
-                enemy_bullet = pg.Rect(enemy.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
-                                       enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
-                enemy_bullets.append(enemy_bullet)
-            if enemy.y >= c.HEIGHT:
-                basic_enemies_health.pop(basic_enemies.index(enemy))
-                basic_enemies.remove(enemy)
-            elif enemy.colliderect(space_ship):
-                basic_enemies.remove(enemy)
-                health -= 200
+        for enemy_list in enemies:
+            for enemy in enemy_list:
+                if enemy_list == basic_enemies:
+                    enemy.y += c.ENEMY_Y_VEL
+                elif enemy_list == fast_enemies:
+                    enemy.y += c.ENEMY_Y_VEL + 2
+                elif enemy_list == heavy_enemies:
+                    enemy.y += c.ENEMY_Y_VEL - 1
+                # checking if an enemy health is 0
+                # basic_enemies_health[basic_enemies.index(enemy)]
+                if enemies_health[enemies.index(enemy_list)][enemy_list.index(enemy)] <= 0:
+                    enemies_health[enemies.index(enemy_list)].pop(enemy_list.index(enemy))
+                    enemy_list.pop(enemy_list.index(enemy))
+                # shooting - 1 in 100 frames
+                if random.randint(0, 100) == 100:
+                    enemy_bullet = pg.Rect(enemy.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
+                                           enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
+                    enemy_bullets.append(enemy_bullet)
+                if enemy.y >= c.HEIGHT:
+                    enemies_health[enemies.index(enemy_list)].pop(enemy_list.index(enemy))
+                    enemy_list.remove(enemy)
+                elif enemy.colliderect(space_ship):
+                    enemy_list.remove(enemy)
+                    health -= 200
+            for bullet in bullets:
+                if bullet.collidelist(enemy_list) >= 0:
+                    enemies_health[enemies.index(enemy_list)][bullet.collidelist(enemy_list)] -= bullet_damage
+                    bullets.remove(bullet)
+                elif bullet.y < 0:
+                    bullets.remove(bullet)
         for bullet in bullets:
             bullet.y -= c.BULLET_VEL
-            if bullet.collidelist(basic_enemies) >= 0:
-                basic_enemies_health[bullet.collidelist(basic_enemies)] -= bullet_damage
-                bullets.remove(bullet)
-            elif bullet.y < 0:
-                bullets.remove(bullet)
         for enemy_bullet in enemy_bullets:
             enemy_bullet.y += c.ENEMY_BULLET_VEL
+            #enemy_bullet_mask = pg.mask.from_surface(enemy_bullet)
+            #if space_ship_mask.overlap(enemy_bullet_mask, (enemy_bullet.x - space_ship.x, enemy_bullet.y - space_ship.y)):
+                #enemy_bullets.remove(enemy_bullet)
+                #health -= 50
             if enemy_bullet.colliderect(space_ship):
                 enemy_bullets.remove(enemy_bullet)
                 health -= 50
@@ -256,14 +288,21 @@ while True:
             pg.draw.rect(window, c.BULLET_COLOR, bullet)
         for enemy_bullet in enemy_bullets:
             pg.draw.rect(window, c.ENEMY_BULLET_COLOR, enemy_bullet)
-        for enemy in basic_enemies:
-            window.blit(c.BASIC_ENEMY_IMAGE, enemy)
+        for enemy_list in enemies:
+            for enemy in enemy_list:
+                if enemy_list == basic_enemies:
+                    window.blit(c.BASIC_ENEMY_IMAGE, enemy)
+                elif enemy_list == fast_enemies:
+                    window.blit(c.FAST_ENEMY_IMAGE, enemy)
+                elif enemy_list == heavy_enemies:
+                    window.blit(c.HEAVY_ENEMY_IMAGE, enemy)
 
-            # enemy health bars
-            pg.draw.rect(window, (255, 0, 0), (enemy.x + 10, enemy.y - 20, c.IMAGE_SIZE - 20, 5))
-            pg.draw.rect(window, (0, 255, 0), (enemy.x + 10, enemy.y - 20,
-                                               basic_enemies_health[basic_enemies.index(enemy)] / basic_enemy_max_health *
-                                               (c.IMAGE_SIZE - 20), 5))
+                # enemy health bars
+                pg.draw.rect(window, (255, 0, 0), (enemy.x + 10, enemy.y - 20, c.IMAGE_SIZE - 20, 5))
+                pg.draw.rect(window, (0, 255, 0), (enemy.x + 10, enemy.y - 20,
+                                                   enemies_health[enemies.index(enemy_list)][enemy_list.index(enemy)]
+                                                   / enemies_max_health[enemies.index(enemy_list)] *
+                                                   (c.IMAGE_SIZE - 20), 5))
         for upgrade in upgrades:
             window.blit(c.UPGRADE_ICON_IMAGE, upgrade)
 
