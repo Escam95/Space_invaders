@@ -3,7 +3,6 @@ import Constants as c
 import random
 
 #  WE NEED:
-#  Health bars
 #  Upgrades
 #  Update the dmg dealing
 #  End screen
@@ -50,6 +49,7 @@ while True:
     spawning_upgrade_countdown = spawning_upgrade_delay
     health = c.STARTING_HEALTH
     max_health = health
+    health_inc = 0
     bullet_damage = c.STARTING_BULLET_DMG
     basic_enemy_health = c.ENEMY_STARTING_HEALTH
     fast_enemy_health = c.ENEMY_STARTING_HEALTH - 10
@@ -94,7 +94,6 @@ while True:
         elif event.key == pg.K_SPACE:
             spawn_swarm()
 
-
     #  spawning an enemy
     def spawn_basic(position):
         enemy = pg.Rect(position, 0,
@@ -125,7 +124,6 @@ while True:
         for i in range(0, round((c.WIDTH - 2 * c.SCREEN_OFFSET) / 64)):
             spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
-
     #  spawning an upgrade
     def spawn_upgrade(position):
         upgrade = pg.Rect(position, 0, c.IMAGE_SIZE, c.IMAGE_SIZE)
@@ -143,20 +141,19 @@ while True:
             elif event.type == pg.KEYUP:
                 on_key_up(event)
 
-
     # do you really want to exit menu
     def on_exit():
         global game_running, game_stopped
         game_stopped = True
         while game_stopped:
-            exit_Surface = font_obj.render('Exit?', True, (255, 255, 255), c.SPACE)
-            exit_2_Surface = font_obj.render('LClick to cancel', True, (255, 255, 255), c.SPACE)
-            exit_2_Rect = exit_2_Surface.get_rect()
-            exit_Rect = exit_Surface.get_rect()
-            exit_Rect.center = (c.WIDTH // 2, c.HEIGHT // 2)
-            exit_2_Rect.center = (c.WIDTH // 2, c.HEIGHT // 2 + exit_Rect.height)
-            window.blit(exit_Surface, exit_Rect)
-            window.blit(exit_2_Surface, exit_2_Rect)
+            exit_surface = font_obj.render('ESC to leave', True, (255, 255, 255), c.SPACE)
+            exit_2_surface = font_obj.render('L-CLICK to continue', True, (255, 255, 255), c.SPACE)
+            exit_2_rect = exit_2_surface.get_rect()
+            exit_rect = exit_surface.get_rect()
+            exit_rect.center = (c.WIDTH // 2, c.HEIGHT // 2)
+            exit_2_rect.center = (c.WIDTH // 2, c.HEIGHT // 2 + exit_rect.height)
+            window.blit(exit_surface, exit_rect)
+            window.blit(exit_2_surface, exit_2_rect)
             pg.display.flip()
             key_input = pg.key.get_pressed()
             for event in pg.event.get():
@@ -224,18 +221,21 @@ while True:
 
         #  updating the lists
         for upgrade in upgrades:
-            global ally_upgrade, space_ship_image, bullet_damage
+            global ally_upgrade, space_ship_image, bullet_damage, health_inc
             upgrade.y += c.ENEMY_Y_VEL
             if upgrade.colliderect(space_ship):
                 ally_upgrade += 1
                 upgrades.remove(upgrade)
-                health += 200
+                health += 200 + health_inc
                 max_health += 200
                 bullet_damage += 5
+                health_inc += 50
                 if shooting_delay > 5:
                     shooting_delay -= 5
                 if ally_upgrade < c.UPGRADE_IMAGES:
                     space_ship_image = c.ALLY_UPGRADES[ally_upgrade]
+                if health > max_health:
+                    health = max_health
 
         for enemy_list in enemies:
             for enemy in enemy_list:
@@ -271,10 +271,11 @@ while True:
             bullet.y -= c.BULLET_VEL
         for enemy_bullet in enemy_bullets:
             enemy_bullet.y += c.ENEMY_BULLET_VEL
-            #enemy_bullet_mask = pg.mask.from_surface(enemy_bullet)
-            #if space_ship_mask.overlap(enemy_bullet_mask, (enemy_bullet.x - space_ship.x, enemy_bullet.y - space_ship.y)):
-                #enemy_bullets.remove(enemy_bullet)
-                #health -= 50
+            # enemy_bullet_mask = pg.mask.from_surface(enemy_bullet)
+            # if space_ship_mask.overlap(enemy_bullet_mask,
+            # (enemy_bullet.x - space_ship.x, enemy_bullet.y - space_ship.y)):
+            # enemy_bullets.remove(enemy_bullet)
+            # health -= 50
             if enemy_bullet.colliderect(space_ship):
                 enemy_bullets.remove(enemy_bullet)
                 health -= 50
