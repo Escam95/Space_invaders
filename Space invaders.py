@@ -50,6 +50,8 @@ while True:
     health = c.STARTING_HEALTH
     max_health = health
     health_inc = 0
+    enemy_damage_inc = 0
+    bullet_damage_inc = 0
     bullet_damage = c.STARTING_BULLET_DMG
     basic_enemy_health = c.ENEMY_STARTING_HEALTH
     fast_enemy_health = c.ENEMY_STARTING_HEALTH - 10
@@ -167,7 +169,7 @@ while True:
         global space_ship_vel, basic_spawning_delay_countdown, \
             shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, \
             health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown,\
-            fast_spawning_delay_countdown, heavy_spawning_delay_countdown
+            fast_spawning_delay_countdown, heavy_spawning_delay_countdown, enemy_damage_inc, bullet_damage_inc
 
         if health <= 0:
             game_running = False
@@ -175,12 +177,13 @@ while True:
         #  timers
         score_delay_countdown -= 1
         if score_delay_countdown <= 0:
-            score_Surface = font_obj.render(str(score), True, (97, 222, 42), None)
+            score_Surface = font_obj.render(str(score // c.SCORE_A), True, (97, 222, 42), None)
             score_Rect = score_Surface.get_rect()
             score_Rect.center = (c.WIDTH // 2, c.HEIGHT // 12)
             score += c.SCORE_INCREMENT
             score_delay_countdown = score_delay
-
+            enemy_damage_inc += 2
+            bullet_damage_inc += 1
         shooting_delay_countdown -= 1
         if shooting_delay_countdown <= 0:
             bullet = pg.Rect(space_ship.x + c.IMAGE_SIZE // 2 - c.BULLET_WIDTH // 2,
@@ -260,7 +263,7 @@ while True:
                     enemy_list.remove(enemy)
                 elif enemy.colliderect(space_ship):
                     enemy_list.remove(enemy)
-                    health -= 200
+                    health -= 200 + enemy_damage_inc
             for bullet in bullets:
                 if bullet.collidelist(enemy_list) >= 0:
                     enemies_health[enemies.index(enemy_list)][bullet.collidelist(enemy_list)] -= bullet_damage
@@ -278,7 +281,7 @@ while True:
             # health -= 50
             if enemy_bullet.colliderect(space_ship):
                 enemy_bullets.remove(enemy_bullet)
-                health -= 50
+                health -= 50 + bullet_damage_inc
 
 
     def game_output():
