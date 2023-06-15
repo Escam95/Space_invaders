@@ -30,6 +30,7 @@ def get_image(sheet, width, height, image_id, scale, colour, rotation):
 
 
 SCORE_INCREMENT = 1
+SCORE_A = 5
 
 # basic constants
 GAME_ICON = pg.image.load('Images/spaceShips_007.png')
