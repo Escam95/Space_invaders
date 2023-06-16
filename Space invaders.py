@@ -18,8 +18,20 @@ window = pg.display.set_mode((c.WIDTH, c.HEIGHT))
 pg.display.set_caption('Space Invaders')
 pg.display.set_icon(c.GAME_ICON)
 
+wave_1 = [
+    [3, 0, 0],
+    [2, 2, 0],
+    [5, 2, 0]
+]
+
 #  basic variables
 while True:
+
+    level = wave_1
+
+    wave_beaten = True
+    min_wave_beaten = True
+
     bullets = []
     enemy_bullets = []
     basic_enemies = []
@@ -75,6 +87,10 @@ while True:
     end_screen_Rect.center = (c.WIDTH // 2, c.HEIGHT // 2)
 
 
+    def random_screen():
+        return random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET)
+
+
     def on_key_down(event):
         global space_ship_vel, bullets, game_running, end_screen
         if event.key == pg.K_d or event.key == pg.K_RIGHT and \
@@ -95,6 +111,7 @@ while True:
             space_ship_vel = 0
         elif event.key == pg.K_SPACE:
             spawn_swarm()
+
 
     #  spawning an enemy
     def spawn_basic(position):
@@ -126,6 +143,19 @@ while True:
         for i in range(0, round((c.WIDTH - 2 * c.SCREEN_OFFSET) / 64)):
             spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
+
+    def spawn_wave():
+        for wave in level:
+            for enemy_num in wave:
+                for enemy in range(0, enemy_num):
+                    if wave[0] == enemy_num:
+                        spawn_basic(random_screen())
+                    elif wave[1] == enemy_num:
+                        spawn_fast(random_screen())
+                    elif wave[2] == enemy_num:
+                        spawn_heavy(random_screen())
+
+
     #  spawning an upgrade
     def spawn_upgrade(position):
         upgrade = pg.Rect(position, 0, c.IMAGE_SIZE, c.IMAGE_SIZE)
@@ -142,6 +172,7 @@ while True:
                 on_key_down(event)
             elif event.type == pg.KEYUP:
                 on_key_up(event)
+
 
     # do you really want to exit menu
     def on_exit():
@@ -168,13 +199,20 @@ while True:
     def game_update():
         global space_ship_vel, basic_spawning_delay_countdown, \
             shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, \
-            health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown,\
-            fast_spawning_delay_countdown, heavy_spawning_delay_countdown, enemy_damage_inc, bullet_damage_inc
+            health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown, \
+            fast_spawning_delay_countdown, heavy_spawning_delay_countdown, enemy_damage_inc, bullet_damage_inc, wave_beaten
 
         if health <= 0:
             game_running = False
 
-        #  timers
+        if wave_beaten:
+            wave_beaten = False
+            spawn_wave()
+
+        if enemies[0] == [] and enemies[1] == [] and enemies[2] == []:
+            wave_beaten = True
+
+        # timers
         score_delay_countdown -= 1
         if score_delay_countdown <= 0:
             score_Surface = font_obj.render(str(score // c.SCORE_A), True, (97, 222, 42), None)
@@ -193,17 +231,17 @@ while True:
 
         basic_spawning_delay_countdown -= 1
         if basic_spawning_delay_countdown <= 0:
-            spawn_basic(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+            spawn_basic(random_screen())
             basic_spawning_delay_countdown = basic_spawning_delay
 
         fast_spawning_delay_countdown -= 1
         if fast_spawning_delay_countdown <= 0:
-            spawn_fast(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+            spawn_fast(random_screen())
             fast_spawning_delay_countdown = fast_spawning_delay
 
         heavy_spawning_delay_countdown -= 1
         if heavy_spawning_delay_countdown <= 0:
-            spawn_heavy(random.randint(c.SCREEN_OFFSET, c.WIDTH - c.IMAGE_SIZE - c.SCREEN_OFFSET))
+            spawn_heavy(random_screen())
             heavy_spawning_delay_countdown = heavy_spawning_delay
 
         swarm_spawning_countdown -= 1
@@ -259,8 +297,8 @@ while True:
                                            enemy.y + c.IMAGE_SIZE // 2, c.BULLET_WIDTH, c.BULLET_HEIGHT)
                     enemy_bullets.append(enemy_bullet)
                 if enemy.y >= c.HEIGHT:
-                    enemies_health[enemies.index(enemy_list)].pop(enemy_list.index(enemy))
-                    enemy_list.remove(enemy)
+                    # enemies_health[enemies.index(enemy_list)].pop(enemy_list.index(enemy))
+                    enemy.y = -c.IMAGE_SIZE
                 elif enemy.colliderect(space_ship):
                     enemy_list.remove(enemy)
                     health -= 200 + enemy_damage_inc
