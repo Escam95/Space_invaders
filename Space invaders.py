@@ -3,9 +3,7 @@ import Constants as c
 import random
 
 #  WE NEED:
-#  Upgrades
-#  Update the dmg dealing
-#  End screen
+#  sort out the constants
 #  Starting screen
 #  Bosses
 #  Waves
@@ -18,19 +16,21 @@ window = pg.display.set_mode((c.WIDTH, c.HEIGHT))
 pg.display.set_caption('Space Invaders')
 pg.display.set_icon(c.GAME_ICON)
 
-wave_1 = [
+level_1 = [
     [3, 0, 0],
     [2, 2, 0],
     [5, 2, 0]
 ]
-
+levels = [level_1]
 #  basic variables
 while True:
 
-    level = wave_1
+    level = 0
+    wave = 0
 
     wave_beaten = True
-    min_wave_beaten = True
+    level_beaten = True
+    level_in_progress = False
 
     bullets = []
     enemy_bullets = []
@@ -144,17 +144,15 @@ while True:
             spawn_basic(i * 64 + c.SCREEN_OFFSET)
 
 
-    def spawn_wave():
-        for wave in level:
-            for enemy_num in wave:
-                for enemy in range(0, enemy_num):
-                    if wave[0] == enemy_num:
+    def update_level():
+        global wave
+        if level_beaten:
+            cur_level = levels[level]
+            for wave_list in cur_level:
+                if wave_beaten:
+                    wave += 1
+                    for enemy_num in wave_list:
                         spawn_basic(random_screen())
-                    elif wave[1] == enemy_num:
-                        spawn_fast(random_screen())
-                    elif wave[2] == enemy_num:
-                        spawn_heavy(random_screen())
-
 
     #  spawning an upgrade
     def spawn_upgrade(position):
@@ -200,17 +198,17 @@ while True:
         global space_ship_vel, basic_spawning_delay_countdown, \
             shooting_delay_countdown, score_Surface, score_delay_countdown, spawning_upgrade_countdown, game_running, \
             health, score_Rect, score, shooting_delay, max_health, swarm_spawning_countdown, \
-            fast_spawning_delay_countdown, heavy_spawning_delay_countdown, enemy_damage_inc, bullet_damage_inc, wave_beaten
+            fast_spawning_delay_countdown, heavy_spawning_delay_countdown, enemy_damage_inc, bullet_damage_inc,\
+            level_beaten, wave
 
         if health <= 0:
             game_running = False
 
-        if wave_beaten:
-            wave_beaten = False
-            spawn_wave()
+        update_level()
 
         if enemies[0] == [] and enemies[1] == [] and enemies[2] == []:
-            wave_beaten = True
+            wave += 1
+            level_beaten = True
 
         # timers
         score_delay_countdown -= 1
