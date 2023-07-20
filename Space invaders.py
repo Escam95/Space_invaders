@@ -365,7 +365,7 @@ while True:
     space_ship_mask_image = space_ship_mask.to_surface()
     space_ship_vel = 0
 
-    #  main game loop
+    #  main game loo
     while game_running:
         clock.tick(c.FPS)
         game_input()
